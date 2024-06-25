@@ -1,0 +1,81 @@
+#include <iostream>
+using namespace std;
+
+// تابعی برای یافتن بزرگترین عدد در آرایه
+int findMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max)
+            max = arr[i];
+    }
+    return max;
+}
+
+// تابعی برای محاسبه تعداد رقم‌های یک عدد
+int countDigits(int number) {
+    int count = 0;
+    while (number != 0) {
+        number /= 10;
+        count++;
+    }
+    return count;
+}
+
+// تابعی برای دریافت رقم i از یک عدد
+int getDigit(int number, int i) {
+    for (int j = 0; j < i; j++) {
+        number /= 10;
+    }
+    return number % 10;
+}
+
+// تابعی برای مرتب سازی با استفاده از الگوریتم Radix Sort
+void radixSort(int arr[], int n) {
+    int max = findMax(arr, n);
+    int maxDigits = countDigits(max);
+
+    for (int i = 0; i < maxDigits; i++) {
+        int output[n];
+        int count[10] = {0};
+
+        for (int j = 0; j < n; j++) {
+            int digit = getDigit(arr[j], i);
+            count[digit]++;
+        }
+
+        for (int j = 1; j < 10; j++) {
+            count[j] += count[j - 1];
+        }
+
+        for (int j = n - 1; j >= 0; j--) {
+            int digit = getDigit(arr[j], i);
+            output[count[digit] - 1] = arr[j];
+            count[digit]--;
+        }
+
+        for (int j = 0; j < n; j++) {
+            arr[j] = output[j];
+        }
+    }
+}
+
+int main() {
+    const int size = 1000000;
+    int arr[size];
+
+    // تولید داده‌های تصادفی
+    srand(time(NULL));
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand() % 10000000;
+    }
+
+    radixSort(arr, size);
+
+    // چاپ آرایه مرتب شده
+    for (int i = 0; i < size; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
